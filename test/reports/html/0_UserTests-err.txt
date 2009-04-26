@@ -1,0 +1,5 @@
+--Output from testRoomNumberMatchesPattern--
+--Output from testRoomNumberDoesNotMatchPattern--
+--Output from testWishList--
+--Output from testWishListLimit--
+
