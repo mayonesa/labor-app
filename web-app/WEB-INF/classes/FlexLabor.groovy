@@ -1,0 +1,1 @@
+class FlexLabor extends AbstractLabor { }
