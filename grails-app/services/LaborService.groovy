@@ -1,35 +1,86 @@
 class LaborService {
 	
-	def userService
-
+	def laborTermRoleHoursService,
+		currentLaborTermService
+	
     boolean transactional = true
 
+	def allFlexLaborForCurrentTerm = {
+		FlexLabor.findAllByLaborTerm(currentLaborTermService.getLaborTerm())
+	}
+
+	def allDaySpecificLaborForCurrentTerm = {
+		DaySpecificLabor.findAllByLaborTerm(currentLaborTermService.getLaborTerm())
+	}
+
+	def allDayAndTimeSpecificLaborForCurrentTerm = {
+		DayAndTimeSpecificLabor.findAllByLaborTerm(currentLaborTermService.getLaborTerm())
+	}
+
     def possibleLaborers = { labor ->
-    	def usersNeedingLabor = userService.usersNeedingLabor()
+    	def usersNeedingLabor = usersNeedingLabor()
     	if (labor instanceof DayAndTimeSpecificLabor) {
     		def laborOneHourSlots = generateOneHourSlots(labor)
-    		usersNeedingLabor.collect() { userNeedingLabor ->
-    			laborOneHourSlots.each() { laborOneHourSlot ->
-    				if (userNeedingLabor.unavailableSchedule.contains(laborOneHourSlot)) {
-    					return userNeedingLabor
-    				}
-    			}
-    		}
-    	} else {
+    		usersNeedingTheseManyLaborHours(labor).findAll { userNeedingLabor ->
+		    	noConflictProcessor(userNeedingLabor.unavailableSchedule, laborOneHourSlots)
+			}
+    	} 
+		else {
     		usersNeedingLabor
     	}
     }
+
+	private noConflictProcessor = { unavailableSchedule, oneHourSlots ->
+    	conflictProcessor(unavailableSchedule, oneHourSlots, true)
+	}
     
-    def conflicts = { user, dayAndTimeLabor ->
-    	generateOneHourSlots(dayAndTimeLabor).each() {
-    	    if (user.unavailableSchedule.contains(it)) {
-    			return true
-    		}
-    	}
-		false
+    def conflicts = { unavailableSchedule, dayAndTimeLabor ->
+    	conflictProcessor(unavailableSchedule, generateOneHourSlots(dayAndTimeLabor))
     }
 
-	def generateOneHourSlots = { dayAndTimeLabor ->
-		OneHourSlots.generateOneHourSlots dayAndTimeLabor.day, dayAndTimeLabor.startHour,dayAndTimeLabor.durationInHours
+	private def conflictProcessor = { unavailableSchedule, oneHourSlots, conflictNegation = false ->
+		oneHourSlots.each() { oneHourSlot ->
+			if (unavailableSchedule.contains(oneHourSlot)) {
+				conflictNegation = !conflictNegation
+				return
+			}	
+		}
+		conflictNegation
 	}
+
+	def generateOneHourSlots = { dayAndTimeLabor ->
+		OneHourSlot.generateOneHourSlots dayAndTimeLabor.day, dayAndTimeLabor.startHour, dayAndTimeLabor.durationInHours
+	}
+    
+    private usersNeedingTheseManyLaborHours = { labor ->
+		allUserHourNeedsProcessor { hoursNeeded ->
+			hoursNeeded >= labor.durationInHours
+		}
+    } 
+
+	def usersNeedingLabor = {
+		allUserHourNeedsProcessor { hoursNeeded ->
+			hoursNeeded > 0
+		}
+	}
+
+    private allUserHourNeedsProcessor = { userHourNeedProcess ->
+		User.list()?.findAll { user ->
+			userHourNeedProcess(hoursNeeded(user))
+		}
+	}
+	
+	private hoursNeeded = { user ->
+		getHoursRequired(user) - getAssignedLaborHours(user)
+	}
+
+	def getAssignedLaborHours(user) {
+		user.wishList?.sum { labor ->
+			labor.durationInHours
+		} ?: 0
+	}
+	
+    def getHoursRequired(user) {
+    	laborTermRoleHoursService.getRoleHoursRequired(user.role)
+    }
 }

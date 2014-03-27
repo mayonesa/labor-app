@@ -1,0 +1,9 @@
+web-app/WEB-INF/classes
+web-app/plugins
+web-app/js/yui*
+test/reports
+ddl.sql
+stacktrace.log
+.classpath
+.project
+.settings/

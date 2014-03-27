@@ -3,15 +3,17 @@
  *
  */
 class Utils {	
-	static concatenate = { collectionOfCollections ->
+	static concatenate = { Object[] collectionOfCollections ->
 		def concatenatedCollection = []
-		process({ element ->
-					concatenatedCollection.add(element)
-				}, collectionOfCollections)
+		collectionOfCollections?.each() { collection ->
+			collection?.each() { element ->
+				concatenatedCollection.add(element)
+			}
+		}
 		concatenatedCollection
 	}
 	
-	static process = { elementProcessor, collectionOfCollections ->
+	static process = { collectionOfCollections, elementProcessor ->
 		collectionOfCollections?.each() { collection ->
 			collection?.each() { element ->
 				elementProcessor(element)

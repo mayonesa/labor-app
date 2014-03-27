@@ -17,6 +17,12 @@ body {
     font: 11px verdana, arial, helvetica, sans-serif;
 }
 
+.labels {
+    color: #006dba;
+    font-weight: bold;
+    font-size: 11px;
+}
+
 a:link, a:visited, a:hover {
     color: #666;
     font-weight: bold;
@@ -26,7 +32,7 @@ a:link, a:visited, a:hover {
 h1 {
     color: #006dba;
     font-weight: normal;
-    font-size: 16px;
+    font-size: 14px;
     margin: .8em 0 .3em 0;
 }
 
@@ -45,8 +51,6 @@ select {
    padding: 2px 2px 2px 0;
 }
 textarea {
-	width: 250px;
-	height: 150px;
 	vertical-align: top;
 }
 
@@ -148,6 +152,7 @@ th {
     color: #666;
     font-size: 11px;
     font-weight: bold;
+	text-align: center;
     line-height: 17px;
     padding: 2px 6px;
 }
@@ -185,6 +190,21 @@ th.desc a {
     border-left: 1px solid #ddd;
 }
 .list th:hover, .list tr:hover {
+    background: #b2d1ff;
+}
+
+/* SCHEDULE */
+
+.schedule table {
+    border-collapse: collapse;
+}
+.schedule th, .schedule td {
+    border-left: 1px solid #ddd;
+}
+.schedule td {
+	width: 18px;
+}
+.schedule td:hover {
     background: #b2d1ff;
 }
 

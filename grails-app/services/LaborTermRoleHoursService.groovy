@@ -1,5 +1,7 @@
 class LaborTermRoleHoursService {
 
+	def currentLaborTermService
+
 	private roleHoursRequiredMap
 	
     boolean transactional = true
@@ -8,13 +10,13 @@ class LaborTermRoleHoursService {
     	if (!roleHoursRequiredMap) {
     		buildRoleHoursRequiredMap()
     	}
-    	roleHoursRequiredMap.role    		
+   		roleHoursRequiredMap[role]    		
     }
 	
-	def buildRoleHoursRequiredMap() {
+	private def buildRoleHoursRequiredMap() {
 		roleHoursRequiredMap = [:]
-		LaborTermRoleHoursService.list().each() {
-			roleRoleHourRequiredMap.put(it.role, it.hours)
+		LaborTermRoleHours.findAllByLaborTerm(currentLaborTermService.getLaborTerm()).each() {
+			roleHoursRequiredMap.put(it.role, it.hours)
 		}
 	}
 }

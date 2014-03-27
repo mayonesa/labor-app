@@ -1,7 +1,7 @@
-class CurrentLaborTerm {
-	LaborTermType currentLaborTerm
+class CurrentLaborTerm implements Serializable {
+	LaborTermType laborTerm
 	
 	static constraints = {
-		currentLaborTerm(nullable:false)
+		laborTerm(nullable:false)
 	}
 }

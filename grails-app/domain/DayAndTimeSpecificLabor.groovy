@@ -1,10 +1,16 @@
-class DayAndTimeSpecificLabor extends DaySpecificLabor {
+class DayAndTimeSpecificLabor extends AbstractDaySpecificLabor {
 	
-	Integer startTime
-	Integer numberOfLaborers = 1
+	Integer startHour
 
 	static constraints = {
-		startTime(nullable:false, range:6..22)
-		numberOfLaborers(nullable:false, range:1..200)
+		startHour(range: 6..22)
     }
+
+	boolean equals(labor) {
+		super.equals(labor) && startHour == labor.startHour
+	}
+	
+	int hashCode() {
+		super.hashCode() * startHour
+	}
 }
